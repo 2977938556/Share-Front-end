@@ -1,28 +1,80 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <imgHeader v-if="$route.meta.istoken"></imgHeader>
+    <router-view></router-view>
+    <imgFooter></imgFooter>
+
   </div>
+
+
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
+<script>
+import DevicePixelRatio from '@/utils/DevicePixelRatio '
+export default ({
+  name: 'app',
+  mounted() {
+    new DevicePixelRatio().init();
   }
-}
+})
 </script>
 
-<style lang="less">
+
+
+
+<style lange="less" >
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  list-style: none;
+  text-decoration: none;
+  outline: none;
+}
+
+* input {
+  border: none;
+  border: 1px solid #BBBBBB;
+  transition: all 0.5s;
+
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  position: relative;
+
+}
+
+body {
+  background: #fff;
+
+
+
+}
+
+
+/*定义滚动条高宽及背景
+ 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+  background-color: #F5F5F5;
+}
+
+/*定义滚动条轨道
+ 内阴影+圆角*/
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: rgb(177, 177, 177);
+
+}
+
+/*定义滑块
+ 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  background-color: #bee9ff;
+
 }
 </style>

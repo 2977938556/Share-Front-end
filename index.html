@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+
+</html>
+
+
+<script>
+  function fromData(millisecond) {
+    console.log(millisecond)
+    let time = new Date(millisecond) / 1000
+    let month = time.getMonth() + 1 // 国际与国内区别
+    let date = time.getDate()
+    let hours = time.getHours()
+    let minutes = time.getMinutes()
+    // let second = time.getSeconds() // 获取秒数
+    // 小于10前加一个0
+    if (month < 10) {
+      month = '0' + month
+    }
+    if (date < 10) {
+      date = '0' + date
+    }
+    if (hours < 10) {
+      hours = '0' + hours
+    }
+    if (minutes < 10) {
+      minutes = '0' + minutes
+    }
+    // 拼接正确格式返回
+    return time.getFullYear() + '-' + month + '-' + date + ' ' + hours + ':' + minutes
+  }
+
+  let tirm = "1667047910164"
+  let s = fromData(tirm);
+  console.log(s)
