@@ -21,6 +21,7 @@ import User from '@/views/user'//用户
 import EditUser from '@/views/edituser'//用户/编辑个人信息
 import Login from '@/views/login'//登录
 import Register from '@/views/register'//注册
+import Detail from '@/views/detail'//内容详情页面
 
 
 
@@ -60,13 +61,11 @@ let routes = [
       { path: 'shocang', name: "shocang", component: Shocang, meta: { istoken: true } },
     ]
   },
-  {
-    path: '/editUser',
-    name: "editUser",
-    component: EditUser,
-    meta: { istoken: true },
-  },//编辑个人信息页面
-  { path: "*", name: "error", component: Error, meta: { istoken: false } }
+
+
+  { path: '/editUser', name: "editUser", component: EditUser, meta: { istoken: true } },//编辑个人信息页面
+  { path: '/detail', name: 'detail', component: Detail, meta: { istoken: true } },//内容详情页面
+  { path: "*", name: "error", component: Error, meta: { istoken: false } },//
 
 ]
 

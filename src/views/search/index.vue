@@ -5,7 +5,7 @@
       <div class="conter_top">
         <ul>
           <li>
-            <h1>{{title}}</h1>
+            <h1>搜索结果到 {{ imgSearch.length }} 条数据</h1>
           </li>
         </ul>
       </div>
@@ -13,43 +13,48 @@
 
       <div v-show="showSearch" class="conter_button">
         <div class="button_center">
-          <ul>
 
-
+          <ul v-if="imgSearch.length > 0" @click="getImgId">
             <!-- 卡片 -->
-            <li>
+            <li v-for="item in imgSearch" :key="item._id" :data-imgId="item._id">
               <div class="button_top">
-
+                <img :src="item.imgUrl | imgSplice" alt="" :data-imgId="item._id">
               </div>
-              <div class="button_button">
-                <div class="button_button_top">
-                  <div class="button_button_top_left">
-                    <span></span>
-                    <h5>FeiMao@110</h5>
-                    <h6>越努力越不幸运</h6>
+              <div class="button_button" :data-imgId="item._id">
+                <div class="button_button_top" :data-imgId="item._id">
+                  <div class="button_button_top_left" :data-imgId="item._id">
+                    <span>
+                      <img :src="item.bgcUrl | imgBgcsplice" alt="" :data-imgId="item._id">
+                    </span>
+                    <h5 :data-imgId="item._id"> {{ item.author }}</h5>
+                    <h6 :data-imgId="item._id">{{ item.slogan }}</h6>
+
                   </div>
-                  <div class="button_button_top_right">
+                  <div class="button_button_top_right" :data-imgId="item._id">
                     <div>
-                      <span class="iconfont">&#xe60d;</span>
-                      <span class="iconfont">&#xe603;</span>
-                      <span class="iconfont">&#xe8b9;</span>
+                      <span class="iconfont" :data-imgId="item._id">&#xe60d;</span>
+                      <span class="iconfont" :data-imgId="item._id">&#xe603;</span>
+                      <span class="iconfont" :data-imgId="item._id">&#xe8b9;</span>
                     </div>
                   </div>
                 </div>
-                <div class="button_button_button">
-                  <div class="button_button_button_a">这是一个大海，这是一个大海这是一个大海，这是一个大海这是一个大海，这是一个人</div>
-                  <div class="button_button_button_b">#大海 #海浪</div>
-                  <div class="button_button_button_c">2022/10/1</div>
+                <div class="button_button_button" :data-imgId="item._id">
+                  <div class="button_button_button_a" :data-imgId="item._id">{{ item.title }}</div>
+                  <div class="button_button_button_b" :data-imgId="item._id">{{ item.labels }}</div>
+                  <div class="button_button_button_c" :data-imgId="item._id">{{ item.time | fromData }}</div>
                 </div>
               </div>
             </li>
 
           </ul>
+
+          <imgLoading v-else></imgLoading>
+
         </div>
       </div>
 
 
-      <imgLoading v-show="!showSearch"></imgLoading>
+
     </div>
   </div>
 </template>
@@ -57,6 +62,8 @@
 
 
 <script>
+import { mapActions, mapState } from 'vuex';
+
 
 export default {
   name: "Search",
@@ -65,7 +72,60 @@ export default {
       title: "搜索结果",
       showSearch: true,
     }
+  },
+
+  methods: {
+    ...mapActions('search', ["GetImgSearchList"]),
+
+    getSearch() {
+      this.GetImgSearchList(this.$route.query.inputValue)
+    },
+
+    //05:点击跳转到详情页面
+    getImgId(e) {
+      // console.log(e.target)
+
+      let imgId = e.target.dataset.imgid;
+      console.log(imgId)
+
+
+
+
+      // 判断是否为空
+      if (imgId == "") {
+        return alert("系统错误，请刷新重试");
+      }
+
+
+      // 携带参数进行路由的跳转
+      this.$router.push({
+        path: '/detail',
+        query: {
+          imgid: imgId,
+        }
+      })
+    }
+
+
+
+
+  },
+  computed: {
+    ...mapState('search', ['imgSearch'])
+  },
+
+  mounted() {
+    // 开局自动获取数据
+    this.getSearch()
   }
+
+
+
+
+
+
+
+
 }
 </script>
 
@@ -85,7 +145,7 @@ export default {
     .conter_top {
       width: 100%;
       height: 100px;
-      // border: 1px solid red;
+
 
       ul {
         width: 70%;
@@ -139,6 +199,22 @@ export default {
               // background: url('https://img2.baidu.com/it/u=379476991,2239051645&fm=253&fmt=auto&app=138&f=JPEG?w=740&h=470') no-repeat center center;
               background: gainsboro;
               background-size: cover;
+              overflow: hidden;
+
+              img {
+                width: 100%;
+                height: auto;
+                margin: 0 auto;
+                display: block;
+                transition-property: all;
+                transition-duration: 0.5s;
+                transition-timing-function: cubic-bezier(0.05, 1.08, 0.3, 1.15);
+                transition-delay: 0s;
+              }
+
+              img:hover {
+                transform: scale(2);
+              }
             }
 
             .button_button {
@@ -163,11 +239,26 @@ export default {
                     display: block;
                     width: 40px;
                     height: 40px;
+                    background: rgb(236, 0, 0);
+                    float: left;
+                    border-radius: 100px;
+                    margin-left: 14px;
+                    display: block;
+                    width: 40px;
+                    height: 40px;
                     background: gainsboro;
                     float: left;
                     border-radius: 100px;
                     margin-left: 14px;
+                    overflow: hidden;
+                    border: 1px solid gainsboro;
 
+                    img {
+                      width: 100%;
+                      border-radius: 100px;
+                      height: 100%;
+                      border: 1px solid rgb(110, 110, 110);
+                    }
                   }
 
                   h5 {
@@ -277,6 +368,13 @@ export default {
           li:hover {
             transition: all 0.5s;
           }
+        }
+
+        ul:after {
+          display: block;
+          content: "";
+          width: 32%;
+          height: 0px;
         }
 
       }

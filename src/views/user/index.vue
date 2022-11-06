@@ -9,17 +9,17 @@
             <li>
               <div class="user_img">
                 <span>
-                  <img :src="userData.bgcUrl" alt="">
+                  <img :src="user.bgcUrl | imgBgcsplice" alt="">
                 </span>
               </div>
               <div class="user_title">
                 <span>
-                  <h5>{{ userData.author }}</h5>
-                  <h6>{{ userData.slogan }}</h6>
+                  <h5>{{ user.author }}</h5>
+                  <h6>{{ user.slogan }}</h6>
                 </span>
               </div>
               <div class="user_edit">
-                <router-link to="/edituser">编辑资料模块</router-link>
+                <a @click="getEdu(user.originator)">编辑资料模块</a>
               </div>
             </li>
           </ul>
@@ -30,7 +30,7 @@
 
             <!-- 我的模块 -->
             <li>
-              <router-link to="/user/wode" active-class="activeRouter" >
+              <router-link to="/user/wode" active-class="activeRouter">
                 <span class="iconfont woude">&#xe608;</span>
                 <p>我的</p>
               </router-link>
@@ -63,8 +63,6 @@
     </div>
 
 
-
-
   </div>
 
 </template>
@@ -73,25 +71,47 @@
 <script>
 
 
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 
 
 
 export default ({
   name: "user",
+
   computed: {
-    ...mapState('login', {
-      userData: (state) => {
-        return state.userinfor.UserData || {};
+
+    // 获取用户数据
+    ...mapState('user', {
+      user: (state) => {
+        return state.user || {};
       }
     })
+
   },
+
   methods: {
-    hhh(value) {
-      console.log(value)
-    }
+    //获取用户数据的方法
+    ...mapActions('user', ["GetUserListId"]),
+
+    // 点击按钮发送请求获取数据
+    getEdu(val) {
+      this.$router.push({
+        path: '/editUser', query: {
+          originator: val
+        }
+      })
+    },
+
+  },
+
+
+  mounted() {
+    // 发送请求获取用户数据
+    this.GetUserListId()
   }
+
+
 
 })
 
@@ -288,7 +308,7 @@ export default ({
 
   // 数据模块
   .user_conter_center_button {
-    width: 65%;
+    width: 70%;
     height: auto;
     // border: 1px solid rgb(0, 34, 254);
     margin: 0 auto;

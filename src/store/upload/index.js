@@ -8,7 +8,7 @@ export default {
   mutations: {},
 
   actions: {
-    // 01:处理图片
+    // 01处理上传作品
     async GetUploadList({ commit }, data) {
       let res = await getUpload(data || {});
       //02：如果返回的数据是错误的情况
@@ -18,6 +18,11 @@ export default {
         return res;
       }
     }
+
+
+    
+    
+    
 
   },
 

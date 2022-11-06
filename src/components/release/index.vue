@@ -65,7 +65,6 @@ export default {
       let file = this.$refs.files.files;
 
 
-
       // 判断图片类型
       let fileName = file[0].name.substring(file[0].name.lastIndexOf(".") + 1).toLowerCase() || "";
 
@@ -152,7 +151,7 @@ export default {
             this.$router.push('/login')
           } else {
             //成功的状态将图片渲染到img标签上
-            this.$refs.iamges.src = res.data.imgUrl;
+            this.$refs.iamges.src = `http://192.168.43.209:${res.data.imgUrl}`;
             this.$emit('cloneImgr')
             return alert(res.massage);
           }

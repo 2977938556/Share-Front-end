@@ -6,7 +6,7 @@
       <!-- 上 -->
 
       <!-- 上一页 -->
-      <button :disabled="pageNo == 1" @click="$emit('getPage', pageNo - 1)" v-if="dataSize == 0">
+      <button :disabled="pageNo == 1" @click="$emit('getPage', pageNo - 1)" v-if="dataSize != 0">
         上一页
       </button>
       <!-- 第一页 -->
@@ -33,7 +33,7 @@
         {{ dataSizePage }}
       </button>
       <!--下一页  -->
-      <button :disabled="pageNo == dataSizePage || dataSize == 0 " @click="$emit('getPage', pageNo + 1)" v-if="dataSize == 0">
+      <button :disabled="pageNo == dataSizePage || dataSize == 0 " @click="$emit('getPage', pageNo + 1)" v-if="dataSize !== 0">
         下一页
       </button>
 

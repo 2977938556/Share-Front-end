@@ -24,6 +24,9 @@ export default ({
 
 
 <style lange="less" >
+
+
+
 * {
   padding: 0;
   margin: 0;
@@ -64,17 +67,40 @@ body {
 /*定义滚动条轨道
  内阴影+圆角*/
 ::-webkit-scrollbar-track {
-  border-radius: 10px;
-  background-color: rgb(177, 177, 177);
+  /* border-radius: 10px; */
+  background-color: #bbbbbb;
 
 }
 
 /*定义滑块
  内阴影+圆角*/
 ::-webkit-scrollbar-thumb {
-  border-radius: 10px;
+  /* border-radius: 10px; */
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
-  background-color: #bee9ff;
+  background-color: rgb(177, 177, 177);
+
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>

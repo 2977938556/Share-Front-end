@@ -12,13 +12,13 @@ import '@/assets/font_3690278_ygxtnjxwkhj/iconfont.css'
 //注册全局组件
 import imgHeader from '@/components/header'//头部组件
 import imgRelease from '@/components/release'//发布组件教案
-import imgDetaile from '@/components/detaile'// 详情组件
+// import imgDetaile from '@/components/detaile'// 详情组件
 import imgFooter from '@/components/footer'// 底部组件
 import imgPageinfor from '@/components/pageinfo'//  分页器
 import imgLoading from '@/components/loading'// 无数据loding状态
 Vue.component('imgHeader', imgHeader);
 Vue.component('imgRelease', imgRelease)
-Vue.component('imgDetaile', imgDetaile)
+// Vue.component('imgDetaile', imgDetaile)
 Vue.component('imgFooter', imgFooter)
 Vue.component('imgPageinfor', imgPageinfor)
 Vue.component('imgLoading', imgLoading)

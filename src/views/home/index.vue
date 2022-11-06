@@ -21,34 +21,33 @@
       <!-- 首页卡片区域 -->
       <div class="conter_button">
         <div class="button_center">
-          <ul>
+          <ul @click="getImgId">
             <!-- 卡片 -->
-            <li v-for="item of homeDatas" :key=item._id>
-              <div class="button_top">
-                <img :src="item.imgUrl | imgSplice" :alt="item.labels">
+            <li v-for="item of homeDatas" :key=item._id :data-imgId="item._id">
+              <div class="button_top" :data-imgId="item._id">
+                <img :src="item.imgUrl | imgSplice" :alt="item.labels" :data-imgId="item._id">
               </div>
               <div class="button_button">
                 <div class="button_button_top">
                   <div class="button_button_top_left">
                     <span>
-                      <img :src="item.bgcUrl" alt="">
-
+                      <img :src="item.bgcUrl | imgBgcsplice" alt="" :data-imgId="item._id">
                     </span>
-                    <h5>{{ item.author }}</h5>
-                    <h6>{{ item.slogan }}</h6>
+                    <h5 :data-imgId="item._id">{{ item.author }}</h5>
+                    <h6 :data-imgId="item._id">{{ item.slogan }}</h6>
                   </div>
-                  <div class="button_button_top_right">
-                    <div>
-                      <span class="iconfont">&#xe60d;</span>
-                      <span class="iconfont">&#xe603;</span>
-                      <span class="iconfont">&#xe8b9;</span>
+                  <div class="button_button_top_right" :data-imgId="item._id">
+                    <div :data-imgId="item._id">
+                      <span class="iconfont" :data-imgId="item._id">&#xe60d;</span>
+                      <span class="iconfont" :data-imgId="item._id">&#xe603;</span>
+                      <span class="iconfont" :data-imgId="item._id">&#xe8b9;</span>
                     </div>
                   </div>
                 </div>
-                <div class="button_button_button">
-                  <div class="button_button_button_a">{{ item.title }}</div>
-                  <div class="button_button_button_b">{{ item.labels }}</div>
-                  <div class="button_button_button_c">{{ item.time | fromData }}</div>
+                <div class="button_button_button" :data-imgId="item._id">
+                  <div class="button_button_button_a" :data-imgId="item._id">{{ item.title }}</div>
+                  <div class="button_button_button_b" :data-imgId="item._id">{{ item.labels }}</div>
+                  <div class="button_button_button_c" :data-imgId="item._id">{{ item.time | fromData }}</div>
                 </div>
               </div>
             </li>
@@ -85,11 +84,10 @@ export default {
     return {
       title: "首页推荐",
       pageNo: 1,//当前是第几页
-      pageSize: 3,//每一页需要展示多少条数据
+      pageSize: 5,//每一页需要展示多少条数据
       continmus: 5,//连续的页码数,
       sortFlage: 0,// 控制升序与降序
-      trim: null,
-
+      trim: null,// 定时器
     }
   },
   methods: {
@@ -138,7 +136,6 @@ export default {
       });
     },
 
-
     //04:降序与排序
     storeData(e) {
       // 获取自定义属性的值
@@ -155,7 +152,6 @@ export default {
           clearTimeout(this.trim)
         }
 
-
         if (JSON.stringify(this.homeDatas) != "{}") {
           //发送请求
           return this.getHomeData({
@@ -171,7 +167,34 @@ export default {
 
 
       }, 500)
+    },
+
+    //05:点击跳转到详情页面
+    getImgId(e) {
+      let imgId = e.target.dataset.imgid;
+      // 判断是否为空
+      if (imgId == "") {
+        return alert("系统错误，请刷新重试");
+      }
+
+
+      // 携带参数进行路由的跳转
+      this.$router.push({
+        path: '/detail',
+        query: {
+          imgid: imgId,
+        }
+      })
+
+
+
+
+
+
+
     }
+
+
 
   },
 
@@ -179,7 +202,7 @@ export default {
   computed: {
     ...mapState("home", ["dataSizes", "homeDatas"])
   },
-  
+
   mounted() {
     //调用获取用户状态
     this.getUserData()
@@ -298,7 +321,9 @@ export default {
 
 
               img {
-                height: 100%;
+                width: 100%;
+                height: auto;
+
                 margin: 0 auto;
                 display: block;
                 transition-property: all;
@@ -325,11 +350,22 @@ export default {
                 div {
                   flex: 1;
                   height: 60px;
+
+
+
+
+
+
+                  // overflow: hidden;
                 }
 
                 .button_button_top_left {
+                  font-size: 12px;
                   // border: 1px solid rgba(255, 0, 238, 0.738);
                   padding-top: 10px;
+                  white-space: nowrap;
+                  // overflow: hidden;
+                  text-overflow: ellipsis;
 
                   span {
                     display: block;

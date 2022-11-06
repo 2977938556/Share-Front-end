@@ -71,8 +71,6 @@ export default {
 
 
 
-
-
     //02:发送获取用户数据携带用户名称和token
     async GetUserList({ commit }) {
       let res = await getUser();
@@ -92,7 +90,7 @@ export default {
 
 
 
-    //退出登录状态
+    //03：退出登录状态
     async OutUserList({ commit }) {
 
       commit('REMOLVEUSER');

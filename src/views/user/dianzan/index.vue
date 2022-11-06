@@ -1,70 +1,142 @@
 <template>
   <div id="wude">
     <div class="user_conter_center_button_title">
-      共有 “{{ shocang.length }}条数据”
+      共有 "{{ userList.length }}"条数据”
     </div>
-    <ul v-if="shocang.length >= 0">
+    <ul v-if="userList.length > 0" @click="getImgId">
       <!-- 卡片 -->
-      <li v-for="item in shocang" :key="item.id">
+      <li v-for="item in userList" :key="item._id" :data-imgId="item._id">
         <div class="button_top">
-          <img :src="item.imgUrl | imgSplice" :alt="item.labels">
+          <img :src="item.imgUrl | imgSplice" alt="" :data-imgId="item._id">
         </div>
-        <div class="button_button">
-          <div class="button_button_top">
-            <div class="button_button_top_left">
+        <div class="button_button" :data-imgId="item._id">
+          <div class="button_button_top" :data-imgId="item._id">
+            <div class="button_button_top_left" :data-imgId="item._id">
               <span>
-                <img :src="item.bgcUrl" :alt="item.labels">
+                <img :src="item.bgcUrl | imgBgcsplice" alt="" :data-imgId="item._id">
               </span>
-              <h5>{{ item.author }}</h5>
-              <h6>{{ item.slogan }}</h6>
+              <h5 :data-imgId="item._id"> {{ item.author }}</h5>
+              <h6 :data-imgId="item._id">{{ item.slogan }}</h6>
 
             </div>
-            <div class="button_button_top_right">
+            <div class="button_button_top_right" :data-imgId="item._id">
               <div>
-                <span class="iconfont">&#xe60d;</span>
-                <span class="iconfont">&#xe603;</span>
-                <span class="iconfont">&#xe8b9;</span>
+                <span class="iconfont" :data-imgId="item._id">&#xe60d;</span>
+                <span class="iconfont" :data-imgId="item._id">&#xe603;</span>
+                <span class="iconfont" :data-imgId="item._id">&#xe8b9;</span>
               </div>
             </div>
           </div>
-          <div class="button_button_button">
-            <div class="button_button_button_a">{{ item.title }}</div>
-            <div class="button_button_button_b">{{ item.labels }}</div>
-            <div class="button_button_button_c">{{ item.time | fromData}}</div>
-
+          <div class="button_button_button" :data-imgId="item._id">
+            <div class="button_button_button_a" :data-imgId="item._id">{{ item.title }}</div>
+            <div class="button_button_button_b" :data-imgId="item._id">{{ item.labels }}</div>
+            <div class="button_button_button_c" :data-imgId="item._id">{{ item.time | fromData }}</div>
           </div>
         </div>
       </li>
+
     </ul>
 
-    <imgLoading else></imgLoading>
+
+
+    <imgLoading v-else></imgLoading>
+
+
 
   </div>
+
+
+
+
 </template>
 
 <script>
-import { mapState } from "vuex";
+
+import { mapState, mapActions } from "vuex";
 
 export default ({
-  name: "Dianzan",
+
+  name: "dianzan",
+
   data() {
     return {
+      userList: [],
 
     }
+  },
+  methods: {
+    ...mapActions('user', ["GetUserList"]),
+
+
+
+    // 获取用户数据
+    async getUser() {
+      //  这里是传递 id 也就是用户的id 和传递是在哪个页面点击的获取数据 这边使用的是路由上的 name属性
+      let res = await this.GetUserList({ _id: this._id, page: this.$route.name })
+
+      // 判断返回的数据是有数据还是没有数 如果有数那么 就渲染 卡片
+      if (res.code != 200 || res.state != true) {
+        this.userList = [];
+        return false;
+      }
+      this.userList = res.data
+    },
+
+
+    //05:点击跳转到详情页面
+    getImgId(e) {
+      // console.log(e.target)
+
+      let imgId = e.target.dataset.imgid;
+      console.log(imgId)
+
+
+
+
+      // 判断是否为空
+      if (imgId == "") {
+        return alert("系统错误，请刷新重试");
+      }
+
+
+      // 携带参数进行路由的跳转
+      this.$router.push({
+        path: '/detail',
+        query: {
+          imgid: imgId,
+        }
+      })
+    }
+
+
+
+
+
+
+
+
   },
 
   computed: {
     ...mapState('login', {
-      shocang: (state) => {
-        return state.userinfor.UserData.dianzng || [];
-      }
+      _id: (state) => {
+        return state.userinfor.UserData._id || "";
+      },
     })
+  },
+
+  mounted() {
+    // 将id 参数传递给store仓库中
+    this.getUser();
   }
+
+
+
+
 })
 
 
 </script>
-
 
 <style lang="less" scoped>
 //04 用户数据模块
@@ -116,7 +188,8 @@ export default ({
 
 
         img {
-          height: 100%;
+          width: 100%;
+          height: auto;
           margin: 0 auto;
           display: block;
           transition-property: all;
@@ -165,9 +238,12 @@ export default ({
 
               img {
                 width: 100%;
+
+
                 border-radius: 100px;
                 height: 100%;
-                border: 1px solid red;
+                border: 1px solid rgb(110, 110, 110);
+
 
               }
 
@@ -289,4 +365,14 @@ export default ({
     height: 0px;
   }
 }
+
+
+// .viewBox {
+//   width: 100%;
+//   height: 100%;
+//   border: 1px solid red;
+//   position:absolute;
+//   top:30%;
+//   left:0;
+// }
 </style>

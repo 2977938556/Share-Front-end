@@ -19,7 +19,7 @@ export default {
 
   },
   actions: {
-    // 首页的数据渲染，返回数据
+    //01： 首页的数据渲染，返回数据
     async GetHomeList({ commit }, data) {
       // console.log("发送的页码数", data)
       let res = await getHomeDate(data);

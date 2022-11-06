@@ -1,4 +1,4 @@
-// 处理时间函数
+//01: 处理时间函数
 export function fromData(time) {
   let num = Number(time)
   // 判断是否有小于10
@@ -32,7 +32,23 @@ export function fromData(time) {
 }
 
 
-//处理了图片路径拼接
+//02:处理了图片路径拼接
 export function imgSplice(img) {
   return `http://192.168.43.209:${img}`
+}
+
+
+
+//处理了图片路径拼接
+export function imgBgcsplice(img) {
+  let imgs = img || "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fc-ssl.duitang.com%2Fuploads%2Fblog%2F202102%2F26%2F20210226073347_50f94.thumb.1000_0.jpeg&refer=http%3A%2F%2Fc-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1670247493&t=57617974d1d6450e27baa661bf351057"
+
+
+  if (imgs.slice(0, 4) == 'http') {
+    return imgs
+  } else {
+    return `http://192.168.43.209:${imgs}`
+  }
+
+
 }

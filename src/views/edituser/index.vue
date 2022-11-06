@@ -19,25 +19,25 @@
             <li>
               <label>
                 <span class="imgBgc">
-                  <img src="#" alt="">
+                  <img :src="users.bgcUrl | imgBgcsplice" alt="" ref="iamges">
                 </span>
                 <span class="xuanzeFile">
                   <p>上传头像</p>
-                  <input type="file">
+                  <input type="file" ref="files" @change="showImg">
                 </span>
               </label>
             </li>
             <!-- 02：昵称表单 -->
             <li>
               <span>昵称</span>
-              <input type="text">
+              <input type="text" v-model="author">
             </li>
 
             <!-- 02：名称模块 -->
             <li>
               <label for="mc">
                 <span>标语</span>
-                <input type="text" id="mc">
+                <input type="text" id="mc" v-model="slogan">
               </label>
             </li>
 
@@ -46,39 +46,32 @@
             <li>
               <label for="jj">
                 <span>简介</span>
-                <textarea name="" id="" cols="30" rows="10" itemid="jj"></textarea>
+                <textarea name="" id="" cols="30" rows="10" itemid="jj" v-model="befint"></textarea>
               </label>
             </li>
-
 
 
             <!--04: 手机号 -->
             <li>
               <label for="phone">
                 <span>手机号</span>
-                <input type="text" id="phone">
+                <input type="text" id="phone" v-model="phone">
               </label>
             </li>
-
-
 
             <!-- 05：性别 -->
-            <li>
+            <li class="check">
               <span>性别</span>
-
               <label for="">
-                ♂<input type="checkbox" name="woman">
+                ♀<input type="checkbox" data-name="0" name="woman">
               </label>
               <label for="">
-                ♀<input type="checkbox" name="male">
-
+                ♂<input type="checkbox" name="mail" data-name="1">
               </label>
-
+              <label for="">
+                :)<input type="checkbox" name="secred" data-name="-1" checked>
+              </label>
             </li>
-
-
-
-
           </ul>
         </div>
       </div>
@@ -87,7 +80,7 @@
       <div class="EditUser_center_btn">
         <div>
           <span>取消</span>
-          <span>修改</span>
+          <span @click="submitEdiuser">提交</span>
         </div>
       </div>
 
@@ -99,16 +92,208 @@
 
 
 <script>
+import { mapActions, mapState } from 'vuex';
+
+
+
 export default {
   name: "EditUser",
+  data() {
+    return {
+      bgcUrl: "",//头像数据
+      author: "",//作者
+      slogan: "",//标语
+      befint: "",//简介,
+      phone: "",// 手机号
+      sex: "-1",// 性别
+
+    }
+  },
+  computed: {
+    ...mapState('edituser', ["users"])
+  },
+  methods: {
+    // 获取用户数据接口
+    ...mapActions('edituser', ["GetEditUser", "GetDituser"]),
+
+    // 01:传递用户id 进行保存数据
+    async getUser() {
+      let originator = this.$route.query.originator;
+      let res = await this.GetEditUser({ originator })
+      if (res.code != 200 || res.state != true) {
+        return alert("个人信息获取失败请重新登录一下");
+      }
+
+      // 将数据保存到data中的数据
+      this.bgcUrl = this.users.bgcUrl;
+      this.author = this.users.author;
+      this.slogan = this.users.slogan || "";
+      this.befint = this.users.befint || "";
+      this.phone = this.users.phone || "";
+
+    },
+
+
+    // 监听是否上传头像
+    // 01：监听是否选择了文件 如果有那么就会调用这个方法
+    showImg() {
+      let file = this.$refs.files.files;
+
+      // 判断图片类型
+      let fileName = file[0].name.substring(file[0].name.lastIndexOf(".") + 1).toLowerCase() || "";
+
+      //这里是上传图片错误的情况
+      if (["jpg", "png", "webp", "gif"].includes(fileName) == false) {
+        return alert("请上传 jpg/png/git/webp 格式图片")
+      }
+
+      // 正确的话那么就将图片转换成base 64并显示给前端
+      let files = file[0];
+      let imgUrl = globalThis.URL.createObjectURL(files);
+      const img = this.$refs.iamges;
+      img.alt = file.name;
+      img.src = imgUrl;
+
+    },
+
+    // 单选按钮模块
+    checkoutMin() {
+      let checkeds = document.querySelectorAll('.check input');
+      checkeds.forEach(item => {
+        item.addEventListener('click', (e) => {
+          checkeds.forEach(i => {
+            i.checked = false;
+          })
+          e.target.checked = true;
+          if (e.target.checked == true) {
+            let sex = e.target.dataset.name;
+            this.sex = sex;
+          }
+        })
+      })
+    },
+
+
+
+
+    // 数据上传功能
+    async submitEdiuser() {
+
+      let file = this.$refs.files.files;
+      // 判断必填项是否填了
+      if (this.author == "" || this.sex == "") {
+        return alert("昵称和性别忘记填啦")
+
+        // 这里判断是否上传了图片
+      } else if (file.length != 0) {
+        if ((file[0].size / 1024) > 10000) {
+          return alert("图片不能大于10MB");
+        } else {
+          // 实例化一个FileReader 实例对象
+          let reader = new FileReader();
+          reader.readAsDataURL(file[0]);
+          reader.onload = async (e) => {
+            // 这里调用方法提交数据
+            let res = await this.GetDituser({
+              filesUpload: {
+                fileData: e.target.result,
+                // fileData: "111",
+                fileName: file[0].type,
+              },
+              inputFile: {
+                author: this.author,//作者
+                slogan: this.slogan,//标语
+                befint: this.befint,//简介,
+                phone: this.phone,// 手机号
+                sex: this.sex,// 性别 
+                originator: this.$route.query.originator,
+              }
+            })
+            if (res.code == 200 || res.state == false) {
+              alert("更新成功")
+              this.$router.go(-1)
+
+            } else {
+              alert("更新数据失败")
+
+            }
+
+          }
+
+        }
+        // 这里是直接调用方法上传数据[上面的是携带图片数据]
+      } else if (file.length == 0) {
+        /// 这里调用方法提交数据
+        let res = await this.GetDituser({
+          inputFile: {
+            bgcUrl: this.bgcUrl,
+            author: this.author,//作者
+            slogan: this.slogan,//标语
+            befint: this.befint,//简介,
+            phone: this.phone,// 手机号
+            sex: this.sex,// 性别
+            originator: this.$route.query.originator,
+          }
+        })
+
+        if (res.code == 200 || res.state == false) {
+          alert("更新成功")
+          this.$router.go(-1)
+
+        } else {
+          alert("更新数据失败")
+
+        }
+
+
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    },
+
+
+
+
+  },
+
+
+
+
+
+
+  mounted() {
+
+    this.getUser();
+    this.checkoutMin();
+
+
+
+
+
+
+  }
+
 
 }
+
+
+
 </script>
 
 
 
 <style lang="less" scoped>
-//主体
 #EditUser {
   width: 100%;
   height: auto;
@@ -185,13 +370,26 @@ export default {
               display: flex;
               align-items: center;
 
+
               //放图片的
               .imgBgc {
                 display: block;
                 width: 80px;
                 height: 80px;
-                background: rgb(0, 0, 0);
+                // background: rgb(0, 0, 0);
                 border-radius: 100px;
+
+                img {
+                  border-radius: 100px;
+
+                  // display: block;
+                  // margin: 0 auto;
+                  width: auto;
+                  height: 120%;
+                  border: 1px solid rgb(104, 104, 104);
+
+                }
+
               }
 
               // 选择文件控件
@@ -204,10 +402,10 @@ export default {
                 text-align: center;
                 line-height: 50px;
                 color: #fff;
-                // 6226822200285681372
                 position: relative;
-                left: 20px;
+                left: 80px;
                 overflow: hidden;
+
 
                 p {
                   float: left;
@@ -219,8 +417,12 @@ export default {
                   width: 100%;
                   height: 100%;
                   opacity: 0;
-                  // border: 1px solid red;
                 }
+              }
+
+              .xuanzeFile:hover {
+                opacity: 0.5;
+                cursor: pointer;
               }
 
 
@@ -303,7 +505,7 @@ export default {
               float: left;
               margin-left: 20px;
               font-size: 20px;
-              margin-top:26px;
+              margin-top: 26px;
 
               input {
                 width: 24px;
@@ -351,16 +553,17 @@ export default {
           color: #fff;
           text-align: center;
           border-radius: 10px;
-          cursor:pointer;
+          cursor: pointer;
           transition: all 0.3s;
 
         }
-        
+
 
         span:nth-child(1) {
           background: #454545;
         }
-    span:hover{
+
+        span:hover {
           // background: red;
           box-shadow: 1px 1px 19px 0px #0000006e;
         }

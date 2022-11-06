@@ -38,7 +38,7 @@
             <!-- 这里是登录的情况下 -->
             <router-link to="/user" v-else>
               <span class="touxiang">
-                <img :src="UserData.bgcUrl" alt="">
+                <img :src="UserData.bgcUrl | imgBgcsplice" alt="">
               </span>
             </router-link>
             <router-link to="/" v-if="UserData">
@@ -89,7 +89,7 @@ export default ({
   methods: {
     //获取Vuex 退出登录的
     ...mapActions("login", ["GetUserList", "OutUserList"]),
-
+    ...mapActions('search', ["GetImgSearchList"]),
     //-01:获取焦点的时候 隐藏搜索图标
     showIconfont() {
       this.showIcon = false;
@@ -100,8 +100,9 @@ export default ({
       if (this.searchValue == "") this.showIcon = true;
     },
 
+
     //-03：理搜索的结果以及跳页面
-    searchContent() {
+    async searchContent() {
       //这里判断一下路由是否在当前的路由
       if (this.$route.name == "serach") {
         if (this.searchValue == "") {
@@ -112,10 +113,12 @@ export default ({
           if (this.time !== null) {
             clearTimeout(this.time);
           }
-
           //将定时器的数值重新赋予给time  ，并且发送请求
-          this.time = setTimeout(() => {
-            console.log("获取ajax请求获取搜索数据")
+          this.time = setTimeout(async () => {
+            console.log("获取ajax请求获取搜索数据");
+
+            let res = await this.GetImgSearchList(this.searchValue);
+            this.$router.push({ path: "/serach", query: { inputValue: this.searchValue, } }).catch(err => { })
           }, 500);
 
           return;
@@ -124,6 +127,8 @@ export default ({
       } else {
         //判断input 输入框中是否为空,如果不为空那么就跳转路由到search  并携带参数
         if (this.searchValue != "") {
+          let res = await this.GetImgSearchList(this.searchValue);
+
           this.$router.push({ path: "/serach", query: { inputValue: this.searchValue, } }).catch(err => { })
         } else if (this.searchValue == "") {
           return alert("搜索的内容不可以为空")
